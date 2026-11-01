@@ -7,6 +7,7 @@ from __future__ import annotations
 import dataclasses
 
 import pytest
+from pydantic import ValidationError
 
 from elastic_evals.evaluators.base import SimpleEvaluator
 from elastic_evals.types import (
@@ -14,6 +15,7 @@ from elastic_evals.types import (
     EvaluationDataset,
     EvaluationResult,
     EvaluatorParams,
+    Example,
     ExampleResult,
     ExampleWithId,
     RunContext,
@@ -82,3 +84,13 @@ async def _no_score(params: EvaluatorParams) -> EvaluationResult:
 def test_an_unknown_kind_is_rejected_when_the_evaluator_is_created() -> None:
     with pytest.raises(ValueError, match='kind must be "llm" or "code", got "CODE"'):
         SimpleEvaluator(name="exact", kind="CODE", evaluate=_no_score)  # type: ignore[arg-type]
+
+
+def test_example_rejects_non_dict_output() -> None:
+    with pytest.raises(ValidationError):
+        Example(input={"q": "2+2"}, output="4")  # type: ignore[arg-type]
+
+
+def test_example_accepts_dict_or_missing_output() -> None:
+    assert Example(input={"q": "2+2"}, output={"answer": "4"}).output == {"answer": "4"}
+    assert Example(input={"q": "2+2"}).output is None

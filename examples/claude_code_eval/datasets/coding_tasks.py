@@ -10,7 +10,7 @@ from typing import Any
 
 from elastic_evals.types import EvaluationDataset, Example
 
-CodingTaskExample = Example[dict[str, str], None, dict[str, Any]]
+CodingTaskExample = Example[dict[str, str], dict[str, Any], dict[str, Any]]
 
 coding_tasks_dataset: EvaluationDataset[CodingTaskExample] = EvaluationDataset(
     name="claude-code-eval: coding-tasks",

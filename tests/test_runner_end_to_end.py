@@ -186,7 +186,7 @@ async def test_runner_end_to_end(
         "elastic_evals.executor.client.log_results_url",
         lambda _logger, url, run_id: results_url_calls.append((url, run_id)),
     )
-    dataset: EvaluationDataset[Example[dict[str, str], None, None]] = EvaluationDataset(
+    dataset: EvaluationDataset[Example[dict[str, str], dict[str, Any], None]] = EvaluationDataset(
         name="tiny",
         description="tiny dataset",
         examples=[

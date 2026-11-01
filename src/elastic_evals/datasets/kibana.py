@@ -6,8 +6,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from elastic_evals.api.datasets_client import KibanaDatasetsClient, compute_dataset_id
 from elastic_evals.api.datasets_models import UpsertDatasetExamplePayload
 from elastic_evals.types import EvaluationDataset, ExampleWithId
@@ -17,8 +15,7 @@ class KibanaDatasetStore:
     """Replaces the dataset on the Kibana side, then reads back the examples with Kibana's ids.
 
     The upsert is a full replacement, so the examples the task runs on are exactly the ones
-    in `dataset`, but with server-assigned ids. Only dict-shaped `output` and `metadata`
-    survive the round-trip; anything else is stored as `None`.
+    in `dataset`, but with server-assigned ids.
     """
 
     def __init__(self, client: KibanaDatasetsClient) -> None:
@@ -30,9 +27,9 @@ class KibanaDatasetStore:
             dataset.description,
             [
                 UpsertDatasetExamplePayload(
-                    input=_dict_or_none(example.input),
-                    output=_dict_or_none(example.output),
-                    metadata=_dict_or_none(example.metadata),
+                    input=example.input,
+                    output=example.output,
+                    metadata=example.metadata,
                 )
                 for example in dataset.examples
             ],
@@ -47,7 +44,3 @@ class KibanaDatasetStore:
             )
             for example in upstream.examples
         ]
-
-
-def _dict_or_none(value: Any) -> dict[str, Any] | None:
-    return value if isinstance(value, dict) else None

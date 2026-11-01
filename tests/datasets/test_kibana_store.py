@@ -26,7 +26,7 @@ def _dataset() -> EvaluationDataset:
         description="two greetings",
         examples=[
             Example(input={"q": "hi"}, output={"a": "hello"}, metadata={"lang": "en"}),
-            Example(input={"q": "hola"}, output="not a dict", metadata=None),
+            Example(input={"q": "hola"}, output=None, metadata=None),
         ],
     )
 
@@ -50,7 +50,7 @@ def _client() -> AsyncMock:
 
 
 @pytest.mark.asyncio
-async def test_resolve_upserts_dataset_dropping_non_dict_fields() -> None:
+async def test_resolve_upserts_dataset_examples() -> None:
     client = _client()
 
     await KibanaDatasetStore(client).resolve(_dataset())

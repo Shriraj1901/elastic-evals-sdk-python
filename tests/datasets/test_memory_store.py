@@ -15,8 +15,8 @@ def _dataset(name: str = "greetings") -> EvaluationDataset:
         name=name,
         description="two greetings",
         examples=[
-            Example(input={"q": "hi"}, output="hello", metadata={"lang": "en"}),
-            Example(input={"q": "hola"}, output=["hello", "hi"], metadata=None),
+            Example(input={"q": "hi"}, output={"answer": "hello"}, metadata={"lang": "en"}),
+            Example(input={"q": "hola"}, output={"answers": ["hello", "hi"]}, metadata=None),
         ],
     )
 
@@ -35,9 +35,9 @@ async def test_resolve_passes_input_output_and_metadata_through_unchanged() -> N
     resolved = await InMemoryDatasetStore().resolve(_dataset())
 
     assert resolved[0].input == {"q": "hi"}
-    assert resolved[0].output == "hello"
+    assert resolved[0].output == {"answer": "hello"}
     assert resolved[0].metadata == {"lang": "en"}
-    assert resolved[1].output == ["hello", "hi"]
+    assert resolved[1].output == {"answers": ["hello", "hi"]}
     assert resolved[1].metadata is None
 
 
@@ -79,7 +79,10 @@ async def test_editing_one_example_changes_only_its_id() -> None:
     edited = EvaluationDataset(
         name=original.name,
         description=original.description,
-        examples=[Example(input={"q": "hi"}, output="hello there", metadata={"lang": "en"}), original.examples[1]],
+        examples=[
+            Example(input={"q": "hi"}, output={"answer": "hello there"}, metadata={"lang": "en"}),
+            original.examples[1],
+        ],
     )
 
     original_ids = [e.id for e in await InMemoryDatasetStore().resolve(original)]
@@ -91,7 +94,7 @@ async def test_editing_one_example_changes_only_its_id() -> None:
 
 @pytest.mark.asyncio
 async def test_identical_examples_are_rejected() -> None:
-    same: Example = Example(input={"q": "hi"}, output="hello")
+    same: Example = Example(input={"q": "hi"}, output={"answer": "hello"})
     other: Example = Example(input={"q": "bye"})
     dataset = EvaluationDataset(name="dupes", description="", examples=[same, other, same.model_copy()])
 

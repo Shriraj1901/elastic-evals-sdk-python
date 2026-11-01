@@ -56,8 +56,8 @@ def _dataset() -> EvaluationDataset:
         name="greetings",
         description="two greetings",
         examples=[
-            Example(input={"q": "hi"}, output="hello", metadata={"lang": "en"}),
-            Example(input={"q": "hola"}, output="hello", metadata=None),
+            Example(input={"q": "hi"}, output={"answer": "hello"}, metadata={"lang": "en"}),
+            Example(input={"q": "hola"}, output={"answer": "hello"}, metadata=None),
         ],
     )
 
@@ -87,7 +87,7 @@ async def test_task_receives_store_examples_and_evaluators_receive_task_output()
 
     assert [example.id for example in seen] == expected_ids
     assert [params.output for params in evaluator.params] == ["answer:hi", "answer:hola"]
-    assert evaluator.params[0].expected == "hello"
+    assert evaluator.params[0].expected == {"answer": "hello"}
     assert evaluator.params[0].metadata == {"lang": "en"}
 
 

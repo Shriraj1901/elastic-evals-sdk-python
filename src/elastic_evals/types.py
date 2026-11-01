@@ -12,7 +12,7 @@ from typing import Any, Generic, Literal, Protocol, TypeAlias, TypeVar
 from pydantic import BaseModel
 
 TInput = TypeVar("TInput", bound=dict[str, Any])
-TExpected = TypeVar("TExpected")
+TExpected = TypeVar("TExpected", bound=dict[str, Any])
 TMetadata = TypeVar("TMetadata", bound=dict[str, Any] | None)
 TTaskOutput = TypeVar("TTaskOutput")
 TExample = TypeVar("TExample", bound="Example")
@@ -47,9 +47,9 @@ class EvaluationDataset(BaseModel, Generic[TExample]):
 
     During `run_experiment`, the client's `DatasetStore` turns this into `ExampleWithId`
     instances and the task callable receives those. With the default Kibana store the
-    examples are upserted and re-fetched, so ids come from the server and only dict-shaped
-    `output`/`metadata` survive. With `InMemoryDatasetStore` the examples pass through
-    unchanged and ids are derived from each example's content.
+    examples are upserted and re-fetched, so ids come from the server. With
+    `InMemoryDatasetStore` the examples pass through unchanged and ids are derived from each
+    example's content.
     """
 
     name: str
